@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using CarRentalAPI.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CarRentalAPI.Controllers
