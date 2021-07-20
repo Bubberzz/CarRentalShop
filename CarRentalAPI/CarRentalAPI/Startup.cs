@@ -1,4 +1,6 @@
+using CarRental.Data;
 using CarRentalAPI.Data;
+using CarRentalAPI.Interfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -23,6 +25,7 @@ namespace CarRentalAPI
         {
             services.AddDbContext<CarDbContext>(options => options.UseInMemoryDatabase("Cars"));
             services.AddDbContext<RentedCarDbContext>(options => options.UseInMemoryDatabase("CarsRented"));
+            services.AddScoped<ICarRepository, CarRepository>();
 
 
             services.AddControllers();
