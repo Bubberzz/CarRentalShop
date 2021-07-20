@@ -1,5 +1,7 @@
+using CarRentalAPI.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -19,6 +21,9 @@ namespace CarRentalAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDbContext<CarDbContext>(options => options.UseInMemoryDatabase("Cars"));
+            services.AddDbContext<RentedCarDbContext>(options => options.UseInMemoryDatabase("CarsRented"));
+
 
             services.AddControllers();
             services.AddSwaggerGen(c =>
