@@ -37,7 +37,8 @@ namespace CarRentalAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<string>> CheckRentedCarExpiry()
         {
-
+            await _repository.CheckExpiry();
+            return Ok();
         }
 
         [HttpPut("rent/{id}/{rentPeriod}")]
