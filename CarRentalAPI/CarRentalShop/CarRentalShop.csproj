@@ -9,7 +9,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <OpenApiReference Include="swagger.json" CodeGenerator="NSwagCSharp" ClassName="CarRentalAPIClient" />
+    <OpenApiReference Include="swagger.json" ClassName="CarRentalAPIClient" CodeGenerator="NSwagCSharp" />
   </ItemGroup>
 
   <ItemGroup>

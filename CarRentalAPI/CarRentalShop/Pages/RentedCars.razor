@@ -101,6 +101,8 @@ else
 
     private CarRentalAPIClient CreateClient()
     {
+        Http = new HttpClient();
+        Http.DefaultRequestHeaders.Add("ApiKey", "sdf324SdGgD4324rGdfHG3FDghF45TgD2hgDRGdr");
         return new("https://localhost:44319/", Http);
     }
 }
