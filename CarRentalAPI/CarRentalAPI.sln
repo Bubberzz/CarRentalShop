@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.31129.286
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarRentalAPI", "CarRentalAPI\CarRentalAPI.csproj", "{8A3E5DBF-F344-4F47-86D4-AE3877DE4FBC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarRentalShop", "CarRentalShop\CarRentalShop.csproj", "{969559DC-59A8-4632-88D2-E711AB8C1495}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarRentalShop", "CarRentalShop\CarRentalShop.csproj", "{969559DC-59A8-4632-88D2-E711AB8C1495}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
