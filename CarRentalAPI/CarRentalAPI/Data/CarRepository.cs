@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using CarRentalAPI.Data;
 using CarRentalAPI.Interfaces;
 using CarRentalAPI.Models;
 using Microsoft.Extensions.Configuration;
+using SendGrid;
+using SendGrid.Helpers.Mail;
 
 
 namespace CarRental.Data
@@ -80,15 +83,50 @@ namespace CarRental.Data
         // }
         //
         //
-        // public Task CheckExpiry()
-        // {
-        //   
-        // }
-        
-        // private Task SendNotification(string carName)
-        // {
-        //
-        // }
+
+        public async Task CheckExpiry()
+        {
+            var ts = new TimeSpan(0, 01, 0);
+            var rentedCars = _rentedCarsContext.RentedCars.ToList();
+            
+            foreach (var car in rentedCars)
+            {
+                var aboutToExpire = car.ExpiryDate - ts;
+                await SendNotification(car.Name);
+
+                if (car.ExpiryDate <= DateTime.Now)
+                {
+                    car.Status = "Expired";
+                    SaveChanges();
+                }
+                else if (DateTime.Now >= aboutToExpire &&
+                         DateTime.Now < car.ExpiryDate &&
+                         car.NotificationSent is false)
+                {
+                    car.NotificationSent = true;
+                    await SendNotification(car.Name);
+                    SaveChanges();
+                }
+            }
+        }
+
+        private async Task SendNotification(string carName)
+        {
+            var apiKey = _config.GetValue<string>("SENDGRID_API_KEY");
+            var emailFrom = _config.GetValue<string>("SENDGRID_EMAIL_FROM");
+            var emailTo = _config.GetValue<string>("SENDGRID_EMAIL_TO");
+
+            var client = new SendGridClient(apiKey);
+            var msg = new SendGridMessage()
+            {
+                From = new EmailAddress(emailFrom),
+                Subject = "Reminder",
+                PlainTextContent = $"Hello, your contract for {carName} is about to expire!",
+                HtmlContent = $"<strong>Hello, your contract for {carName} is about to expire!</strong>"
+            };
+            msg.AddTo(new EmailAddress(emailTo));
+            await client.SendEmailAsync(msg);
+        }
 
         private void SaveChanges()
         {

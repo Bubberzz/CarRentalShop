@@ -33,6 +33,13 @@ namespace CarRentalAPI.Controllers
             return Ok(cars);
         }
 
+        [Route("rented/check")]
+        [HttpGet]
+        public async Task<ActionResult<string>> CheckRentedCarExpiry()
+        {
+
+        }
+
         [HttpPut("rent/{id}/{rentPeriod}")]
         public async Task<ActionResult<string>> RentCar(int id, int rentPeriod)
         {
@@ -44,14 +51,6 @@ namespace CarRentalAPI.Controllers
             return Ok(JsonConvert.SerializeObject(response));
         }
 
-        // [Route("rented/check")]
-        // [HttpGet]
-        // public async Task<ActionResult<string>> CheckRentedCarExpiry()
-        // {
-        //
-        // }
-        
-        
         // [HttpPut("return/{id}")]
         // public async Task<ActionResult<string>> ReturnCar(int id)
         // {
