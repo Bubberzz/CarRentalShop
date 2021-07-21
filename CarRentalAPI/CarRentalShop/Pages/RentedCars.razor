@@ -2,8 +2,9 @@
 @using System.Diagnostics
 @using System.Threading
 @using System.Timers
+@using CarRentalShop.Services
 
-@inject HttpClient Http
+@inject HttpClient _http
 
 <h3>Rented Cars</h3>
 <br />
@@ -30,7 +31,7 @@ else
             <RadzenGridColumn TItem="RentedCar" Property="Make" Title="Car Make"></RadzenGridColumn>
             <RadzenGridColumn TItem="RentedCar" Property="Model" Title="Car Model"></RadzenGridColumn>
             <RadzenGridColumn TItem="RentedCar" Property="Status" Title="Car Status"></RadzenGridColumn>
-            <RadzenGridColumn TItem="RentedCar" Property="ExpiryDate" Title="Expiry Date"></RadzenGridColumn>
+            <RadzenGridColumn TItem="RentedCar" Property="ExpiryDate" Title="Expiry Date" FormatString="{0:G}"></RadzenGridColumn>
 
             <RadzenGridColumn TItem="RentedCar" Bubble="false" Filterable="false" Sortable="false" TextAlign="Radzen.TextAlign.Center">
                 <Template Context="data">
@@ -60,14 +61,12 @@ else
     {
         _cars = new List<RentedCar>();
         Loading = "Loading...";
-
-        await UpdateService();
+        CreateClient();
         await UpdateDataGrid();
     }
 
     public async Task UpdateDataGrid()
     {
-        _client = CreateClient();
         _cars = await _client.RentedAsync();
 
         if (_cars.ToList().Count is 0)
@@ -78,31 +77,14 @@ else
 
     public async Task ReturnCar(int id)
     {
-        var client = CreateClient();
-        InputValue = await client.ReturnAsync(id, CancellationToken.None);
+        InputValue = await _client.ReturnAsync(id, CancellationToken.None);
         await OnInitializedAsync();
     }
 
-    public async Task UpdateService()
+    private void CreateClient()
     {
-        InputValue = "";
-        var timer = new System.Timers.Timer();
-        timer.Elapsed += CheckRentedCarExpiry;
-        timer.Interval = 30000;
-        timer.Enabled = true;
-    }
-
-    private async void CheckRentedCarExpiry(object source, ElapsedEventArgs e)
-    {
-        _client = CreateClient();
-        await _client.CheckAsync(CancellationToken.None);
-        await UpdateDataGrid();
-    }
-
-    private CarRentalAPIClient CreateClient()
-    {
-        Http = new HttpClient();
-        Http.DefaultRequestHeaders.Add("ApiKey", "sdf324SdGgD4324rGdfHG3FDghF45TgD2hgDRGdr");
-        return new("https://localhost:44319/", Http);
+        _http = new HttpClient();
+        _http.DefaultRequestHeaders.Add("ApiKey", "sdf324SdGgD4324rGdfHG3FDghF45TgD2hgDRGdr");
+        _client = new CarRentalAPIClient("https://localhost:44319/", _http);
     }
 }

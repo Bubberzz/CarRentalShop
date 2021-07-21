@@ -1,7 +1,8 @@
 ﻿@page "/cars"
 @using System.Threading
 @using System.Timers
-@inject HttpClient Http
+@using CarRentalShop.Services
+@inject HttpClient _http
 
 <h3>
     <b>Rent Car</b>
@@ -23,7 +24,7 @@
 <br />
 
 <div class="row">
-    <RadzenButton style="margin: 0 1rem 1rem 0; width: 100px" BusyText="loading ..." IsBusy=@_busy Click=@RentButton Text="Rent" />
+    <RadzenButton style="margin: 0 1rem 1rem 0; width: 100px" IsBusy=@_busy Click=@RentButton Text="Rent" />
     <div class="col">
 
         <label class="font-weight-light font-italic"> @InputValue</label>
@@ -58,12 +59,11 @@ else
             <RadzenGridColumn TItem="Car" Property="Make" Title="Car Make"></RadzenGridColumn>
             <RadzenGridColumn TItem="Car" Property="Model" Title="Car Model"></RadzenGridColumn>
             <RadzenGridColumn TItem="Car" Property="Status" Title="Car Status"></RadzenGridColumn>
-            <RadzenGridColumn TItem="Car" Property="Price" Title="Car Price"></RadzenGridColumn>
+            <RadzenGridColumn TItem="Car" Property="Price" Title="Car Price" FormatString={0:C2}></RadzenGridColumn>
             <RadzenGridColumn TItem="Car" Property="Stock" Title="Car Stock"></RadzenGridColumn>
         </Columns>
     </RadzenGrid>
 }
-
 
 @code {
 
@@ -98,43 +98,26 @@ else
     protected override async Task OnInitializedAsync()
     {
         _timePeriod = new List<int>(new[] { 2, 3, 4, 5, 6, 7, 8, 9, 10 });
-        await UpdateService();
+        CreateClient();
         await UpdateDataGrid();
     }
 
     public async Task UpdateDataGrid()
     {
-        _client = CreateClient();
         _cars = await _client.CarAsync();
     }
 
     public async Task RentCar(int id, int rentPeriod)
     {
-        _client = CreateClient();
         InputValue = await _client.RentAsync(id, rentPeriod);
         await UpdateDataGrid();
     }
 
-    public async Task UpdateService()
+    private void CreateClient()
     {
-        var timer = new System.Timers.Timer();
-        timer.Elapsed += CheckRentedCarExpiry;
-        timer.Interval = 30000;
-        timer.Enabled = true;
-    }
-
-    private async void CheckRentedCarExpiry(object source, ElapsedEventArgs e)
-    {
-        InputValue = "";
-        _client = CreateClient();
-        await _client.CheckAsync(CancellationToken.None);
-        await UpdateDataGrid();
-    }
-
-    private CarRentalAPIClient CreateClient()
-    {
-        Http = new HttpClient();
-        Http.DefaultRequestHeaders.Add("ApiKey", "sdf324SdGgD4324rGdfHG3FDghF45TgD2hgDRGdr");
-        return new("https://localhost:44319/", Http);
+        _http = new HttpClient();
+        _http.DefaultRequestHeaders.Add("ApiKey", "sdf324SdGgD4324rGdfHG3FDghF45TgD2hgDRGdr");
+        //return new("https://localhost:44319/", _http);
+        _client = new CarRentalAPIClient("https://localhost:44319/", _http);
     }
 }

@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CarRentalShop.Services;
 
 namespace CarRentalShop
 {
@@ -28,6 +29,7 @@ namespace CarRentalShop
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddHttpClient();
+            services.AddSingleton<UpdateService>();
 
         }
 
