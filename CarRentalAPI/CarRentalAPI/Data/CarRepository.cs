@@ -80,17 +80,13 @@ namespace CarRental.Data
         public async Task<string> ReturnCar(int id)
         {
             var rentedCar = _rentedCarsContext.RentedCars.FirstOrDefault(c => c.Id == id);
-            var car = _carsContext.Cars.FirstOrDefault(c => c.Name == rentedCar.Name);
-
-            if (car is not null)
-            {
-                var stock = car.Stock;
-                stock += 1;
-                car.Stock = stock;
-            }
 
             if (rentedCar is not null)
             {
+                var car = _carsContext.Cars.FirstOrDefault(c => c.Name == rentedCar.Name);
+                var stock = car.Stock;
+                stock += 1;
+                car.Stock = stock;
                 _rentedCarsContext.RentedCars.Remove(rentedCar);
             }
             else
