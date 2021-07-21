@@ -9,7 +9,7 @@ namespace CarRentalAPI.Interfaces
         Task<IEnumerable<Car>> GetCars();
         Task<IEnumerable<RentedCar>> GetRentedCars();
         Task<string> RentCar(int id, int rentPeriod);
-        // Task<string> ReturnCar(int id);
+        Task<string> ReturnCar(int id);
         Task CheckExpiry();
     }
 }

@@ -77,12 +77,32 @@ namespace CarRental.Data
             return "Car successfully rented";
         }
         
-        // public Task<string> ReturnCar(int id)
-        // {
-        //
-        // }
-        //
-        //
+        public async Task<string> ReturnCar(int id)
+        {
+            var car = _carsContext.Cars.FirstOrDefault(c => c.Id == id);
+            var rentedCar = _rentedCarsContext.RentedCars.FirstOrDefault(c => c.Name == car.Name);
+
+            if (car is not null)
+            {
+                var stock = car.Stock;
+                stock += 1;
+                car.Stock = stock;
+            }
+
+            if (rentedCar is not null)
+            {
+                _rentedCarsContext.RentedCars.Remove(rentedCar);
+            }
+            else
+            {
+                return "No cars to return";
+            }
+
+            SaveChanges();
+            return "Car successfully returned";
+        }
+        
+        
 
         public async Task CheckExpiry()
         {

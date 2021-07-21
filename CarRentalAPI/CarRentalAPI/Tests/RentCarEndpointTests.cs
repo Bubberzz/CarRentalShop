@@ -13,8 +13,6 @@ namespace CarRentalAPI.Tests
     {
         private readonly TestServer _server;
         private readonly HttpClient _client;
-        private readonly IConfiguration _config;
-        private const string _baseUrl = "https://localhost:44319/";
 
 
         public RentCarEndpointTests()
@@ -22,7 +20,6 @@ namespace CarRentalAPI.Tests
             // Arrange
             _server = new TestServer(new WebHostBuilder().UseStartup<Startup>());
             _client = _server.CreateClient();
-            _config = new ConfigurationRoot(new List<IConfigurationProvider>());
         }
 
         [Theory]
@@ -35,7 +32,7 @@ namespace CarRentalAPI.Tests
         [InlineData(12, 8)]
         [InlineData(5, 9)]
         [InlineData(7, 10)]
-        public async Task WhenRentCarEnpointIsCalled_AndCarIsAvailableToRent_ThenReturnSuccessfulMessage(int Id, int rentPeriod)
+        public async Task WhenRentCarEndpointIsCalled_AndCarIsAvailableToRent_ThenReturnSuccessfulMessage(int Id, int rentPeriod)
         {
             // Act 
             var response = await _client.PutAsync($"https://localhost:44319/api/Car/rent/{Id}/{rentPeriod}", null);
@@ -52,7 +49,7 @@ namespace CarRentalAPI.Tests
         [InlineData(1, 1)]
         [InlineData(1, 11)]
         [InlineData(1, 20)]
-        public async Task WhenRentCarEnpointIsCalled_AndRentPeriodIsOutsideOfAllowedRange_ThenReturnBadRequest(int Id, int rentPeriod)
+        public async Task WhenRentCarEndpointIsCalled_AndRentPeriodIsOutsideOfAllowedRange_ThenReturnBadRequest(int Id, int rentPeriod)
         {
             // Act 
             var response = await _client.PutAsync($"https://localhost:44319/api/Car/rent/{Id}/{rentPeriod}", null);
@@ -62,7 +59,7 @@ namespace CarRentalAPI.Tests
         }
 
         [Fact]
-        public async Task WhenRentCarEnpointIsCalled_AndCarIsNotAvailableToRent_ThenReturnUnsuccessfulMessage()
+        public async Task WhenRentCarEndpointIsCalled_AndCarIsNotAvailableToRent_ThenReturnUnsuccessfulMessage()
         {
             // Act
             await _client.PutAsync("https://localhost:44319/api/Car/rent/1/2", null);

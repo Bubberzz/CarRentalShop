@@ -22,7 +22,7 @@ namespace CarRentalAPI.Tests
         }
 
         [Fact]
-        public async Task WhenGetCarsEnpointIsCalled_ThenReturnCarList()
+        public async Task WhenGetCarsEndpointIsCalled_ThenReturnCarList()
         {
             // Act
             var response = await _client.GetAsync("https://localhost:44319/api/Car");

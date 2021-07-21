@@ -19,7 +19,7 @@ namespace CarRentalAPI.Tests
         }
 
         [Fact]
-        public async Task WhenGetRentedCarsEnpointIsCalled_AndNoCarsAreRented_ThenReturnMessage()
+        public async Task WhenGetRentedCarsEndpointIsCalled_AndNoCarsAreRented_ThenReturnMessage()
         {
             // Act
             var response = await _client.GetAsync("https://localhost:44319/api/Car/rented");

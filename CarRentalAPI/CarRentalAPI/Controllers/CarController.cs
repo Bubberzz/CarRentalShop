@@ -52,10 +52,11 @@ namespace CarRentalAPI.Controllers
             return Ok(JsonConvert.SerializeObject(response));
         }
 
-        // [HttpPut("return/{id}")]
-        // public async Task<ActionResult<string>> ReturnCar(int id)
-        // {
-        //
-        // }
+        [HttpPut("return/{id}")]
+        public async Task<ActionResult<string>> ReturnCar(int id)
+        {
+            var response = await _repository.ReturnCar(id);
+            return Ok(JsonConvert.SerializeObject(response));
+        }
     }
 }
