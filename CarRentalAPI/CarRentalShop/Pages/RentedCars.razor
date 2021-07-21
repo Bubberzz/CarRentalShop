@@ -1,6 +1,106 @@
-﻿<h3>Rented Cars</h3>
+﻿@page "/rented"
+@using System.Diagnostics
+@using System.Threading
+@using System.Timers
 
+@inject HttpClient Http
+
+<h3>Rented Cars</h3>
+<br />
+@if (_cars.ToList().Count is 0)
+{
+    <p>
+        <em>@Loading</em>
+    </p>
+}
+else
+{
+    <RadzenGrid AllowPaging="true"
+                AllowFiltering="true"
+                FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                PageSize="5"
+                AllowSorting="true"
+                Data="@_cars"
+                TItem="RentedCar"
+                ColumnWidth="150px">
+
+        <Columns>
+            <RadzenGridColumn TItem="RentedCar" Property="Id" Title="Car ID"></RadzenGridColumn>
+            <RadzenGridColumn TItem="RentedCar" Property="Name" Title="Car Name"></RadzenGridColumn>
+            <RadzenGridColumn TItem="RentedCar" Property="Make" Title="Car Make"></RadzenGridColumn>
+            <RadzenGridColumn TItem="RentedCar" Property="Model" Title="Car Model"></RadzenGridColumn>
+            <RadzenGridColumn TItem="RentedCar" Property="Status" Title="Car Status"></RadzenGridColumn>
+            <RadzenGridColumn TItem="RentedCar" Property="ExpiryDate" Title="Expiry Date"></RadzenGridColumn>
+
+            <RadzenGridColumn TItem="RentedCar" Bubble="false" Filterable="false" Sortable="false" TextAlign="Radzen.TextAlign.Center">
+                <Template Context="data">
+                    <RadzenButton ButtonStyle="ButtonStyle.Info" Click=@(args => ReturnCar(data.Id)) Text="Return" />
+                </Template>
+            </RadzenGridColumn>
+        </Columns>
+    </RadzenGrid>
+}
+<br />
+
+<div class="row">
+    <div class="col">
+        <label class="font-weight-light font-italic"> @InputValue</label>
+    </div>
+</div>
 
 @code {
 
+    private string InputValue { get; set; }
+    private ICollection<RentedCar> _cars;
+    private string Loading { get; set; }
+    private static CarRentalAPIClient _client;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        _cars = new List<RentedCar>();
+        Loading = "Loading...";
+
+        await UpdateService();
+        await UpdateDataGrid();
+    }
+
+    public async Task UpdateDataGrid()
+    {
+        _client = CreateClient();
+        _cars = await _client.RentedAsync();
+
+        if (_cars.ToList().Count is 0)
+        {
+            Loading = "No cars are currently rented";
+        }
+    }
+
+    public async Task ReturnCar(int id)
+    {
+        var client = CreateClient();
+        InputValue = await client.ReturnAsync(id, CancellationToken.None);
+        await OnInitializedAsync();
+    }
+
+    public async Task UpdateService()
+    {
+        InputValue = "";
+        var timer = new System.Timers.Timer();
+        timer.Elapsed += CheckRentedCarExpiry;
+        timer.Interval = 30000;
+        timer.Enabled = true;
+    }
+
+    private async void CheckRentedCarExpiry(object source, ElapsedEventArgs e)
+    {
+        _client = CreateClient();
+        await _client.CheckAsync(CancellationToken.None);
+        await UpdateDataGrid();
+    }
+
+    private CarRentalAPIClient CreateClient()
+    {
+        return new("https://localhost:44319/", Http);
+    }
 }

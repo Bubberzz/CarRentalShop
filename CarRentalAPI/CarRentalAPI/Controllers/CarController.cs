@@ -40,7 +40,7 @@ namespace CarRentalAPI.Controllers
         public async Task<ActionResult<string>> CheckRentedCarExpiry()
         {
             await _repository.CheckExpiry();
-            return Ok();
+            return Ok(JsonConvert.SerializeObject("Expiry check successful"));
         }
 
         [HttpPut("rent/{id}/{rentPeriod}")]

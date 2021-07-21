@@ -5,7 +5,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <OpenApiReference Include="..\..\..\..\..\Desktop\swagger-base.json" CodeGenerator="NSwagCSharp" ClassName="CarRentalAPIClient" Link="OpenAPIs\swagger-base.json" />
+    <Content Remove="swagger.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <OpenApiReference Include="swagger.json" CodeGenerator="NSwagCSharp" ClassName="CarRentalAPIClient" />
   </ItemGroup>
 
   <ItemGroup>
