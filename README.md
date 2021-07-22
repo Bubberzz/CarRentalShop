@@ -3,7 +3,7 @@ Car rental shop web application
 
 User stories implemented:
 
-· <strike>As a user, I should be able to register and login into the application.</strike>
+· As a user, I should be able to register and login into the application.
 
 · As a user, I should be able to get all the car categories.
 
