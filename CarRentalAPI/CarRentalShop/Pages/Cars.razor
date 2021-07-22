@@ -3,6 +3,7 @@
 @using System.Timers
 @using CarRentalShop.Services
 @inject HttpClient _http
+@attribute [Authorize]
 
 <h3>
     <b>Rent Car</b>
@@ -117,7 +118,6 @@ else
     {
         _http = new HttpClient();
         _http.DefaultRequestHeaders.Add("ApiKey", "sdf324SdGgD4324rGdfHG3FDghF45TgD2hgDRGdr");
-        //return new("https://localhost:44319/", _http);
         _client = new CarRentalAPIClient("https://localhost:44319/", _http);
     }
 }
