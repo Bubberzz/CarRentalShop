@@ -7,7 +7,7 @@ namespace CarRentalShop.Services
     public class UpdateService
     {
         private readonly HttpClient _client = new();
-        //private CarRentalAPIClient apiClient;
+        private CarRentalAPIClient apiClient;
         public UpdateService()
         {
             var timer = new System.Timers.Timer();
@@ -19,8 +19,8 @@ namespace CarRentalShop.Services
 
         private async void CheckRentedCarExpiry(object source, ElapsedEventArgs e)
         {
-            // apiClient = new CarRentalAPIClient( "https://localhost:44319/", _client);
-            // await apiClient.CheckAsync(CancellationToken.None);
+            apiClient = new CarRentalAPIClient( "https://localhost:44319/", _client);
+            await apiClient.CheckAsync(CancellationToken.None);
         }
     }
 }
