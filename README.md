@@ -1,4 +1,4 @@
-# CarRentalShop
+# Car Rental Shop
 Car rental shop web application
 
 User stories implemented:
