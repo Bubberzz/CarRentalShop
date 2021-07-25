@@ -12,7 +12,7 @@ namespace CarRentalShop.Services
         {
             var timer = new System.Timers.Timer();
             timer.Elapsed += CheckRentedCarExpiry;
-            timer.Interval = 30000;
+            timer.Interval = 10000;
             timer.Enabled = true;
             _client.DefaultRequestHeaders.Add("ApiKey", "sdf324SdGgD4324rGdfHG3FDghF45TgD2hgDRGdr");
         }

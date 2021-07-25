@@ -5,5 +5,16 @@
 
 <h2>Welcome to the Car Rental Shop!</h2>
 <br />
-We have great cars.
+
+<AuthorizeView>
+    <Authorized>
+        Hello, @context.User.Identity.Name! <br/> <br />
+        
+        <p>Use links on the left to browse our cars. </p>
+        
+    </Authorized>
+    <NotAuthorized>
+       Please log in to view content.
+    </NotAuthorized>
+</AuthorizeView>
 

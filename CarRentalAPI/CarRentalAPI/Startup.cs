@@ -1,4 +1,3 @@
-using CarRental.Data;
 using CarRentalAPI.Data;
 using CarRentalAPI.Interfaces;
 using Microsoft.AspNetCore.Builder;

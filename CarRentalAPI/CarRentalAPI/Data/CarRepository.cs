@@ -1,17 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using System.Threading.Tasks;
-using CarRentalAPI.Data;
 using CarRentalAPI.Interfaces;
 using CarRentalAPI.Models;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using SendGrid;
 using SendGrid.Helpers.Mail;
 
-
-namespace CarRental.Data
+namespace CarRentalAPI.Data
 {
     public class CarRepository : ICarRepository
     {
@@ -29,27 +26,29 @@ namespace CarRental.Data
 
         public async Task<IEnumerable<Car>> GetCars()
         {
-            return _carsContext.Cars.ToList();
+            return await _carsContext.Cars.ToListAsync();
         }
 
         public async Task<IEnumerable<RentedCar>> GetRentedCars()
         {
-            return _rentedCarsContext.RentedCars.ToList();
+            return await _rentedCarsContext.RentedCars.ToListAsync();
         }
 
         public async Task<string> RentCar(int id, int rentPeriod)
         {
-            var car = _carsContext.Cars.FirstOrDefault(c => c.Id == id);
+            var car = await _carsContext.Cars.FirstOrDefaultAsync(c => c.Id == id);
             var ts = new TimeSpan(0, rentPeriod, 0);
 
             if (car is not null && car.Stock is not 0)
             {
-                var stock = car.Stock;
-                stock -= 1;
-                car.Stock = stock;
+                car.Stock -= 1;
+                if (car.Stock == 0)
+                {
+                    car.Status = "Unavailable";
+                }
 
                 // check if ID is already in db, if yes then increment
-                while (_rentedCarsContext.RentedCars.Any(c => c.Id == id))
+                while (await _rentedCarsContext.RentedCars.AnyAsync(c => c.Id == id))
                 {
                     id += 1;
                 }
@@ -67,26 +66,25 @@ namespace CarRental.Data
                     ExpiryDate = expiryDate
                 };
 
-                _rentedCarsContext.RentedCars.Add(rentCar);
+                await _rentedCarsContext.RentedCars.AddAsync(rentCar);
             }
             else
             {
                 return "Car not in stock";
             }
-            SaveChanges();
+            await SaveChanges();
             return "Car successfully rented";
         }
         
         public async Task<string> ReturnCar(int id)
         {
-            var rentedCar = _rentedCarsContext.RentedCars.FirstOrDefault(c => c.Id == id);
+            var rentedCar = await _rentedCarsContext.RentedCars.FirstOrDefaultAsync(c => c.Id == id);
 
             if (rentedCar is not null)
             {
-                var car = _carsContext.Cars.FirstOrDefault(c => c.Name == rentedCar.Name);
-                var stock = car.Stock;
-                stock += 1;
-                car.Stock = stock;
+                var car = await _carsContext.Cars.FirstOrDefaultAsync(c => c.Name == rentedCar.Name);
+                car.Stock += 1;
+                car.Status = "Available";
                 _rentedCarsContext.RentedCars.Remove(rentedCar);
             }
             else
@@ -94,7 +92,7 @@ namespace CarRental.Data
                 return "No cars to return";
             }
 
-            SaveChanges();
+            await SaveChanges();
             return "Car successfully returned";
         }
         
@@ -103,7 +101,7 @@ namespace CarRental.Data
         public async Task CheckExpiry()
         {
             var ts = new TimeSpan(0, 01, 0);
-            var rentedCars = _rentedCarsContext.RentedCars.ToList();
+            var rentedCars = await _rentedCarsContext.RentedCars.ToListAsync();
             
             foreach (var car in rentedCars)
             {
@@ -113,7 +111,7 @@ namespace CarRental.Data
                 if (car.ExpiryDate <= DateTime.Now)
                 {
                     car.Status = "Expired";
-                    SaveChanges();
+                    await SaveChanges();
                 }
                 else if (DateTime.Now >= aboutToExpire &&
                          DateTime.Now < car.ExpiryDate &&
@@ -121,7 +119,7 @@ namespace CarRental.Data
                 {
                     car.NotificationSent = true;
                     await SendNotification(car.Name);
-                    SaveChanges();
+                    await SaveChanges();
                 }
             }
         }
@@ -144,10 +142,10 @@ namespace CarRental.Data
             await client.SendEmailAsync(msg);
         }
 
-        private void SaveChanges()
+        private async Task SaveChanges()
         {
-            _rentedCarsContext.SaveChangesAsync();
-            _carsContext.SaveChangesAsync();
+            await _rentedCarsContext.SaveChangesAsync();
+            await _carsContext.SaveChangesAsync();
         }
     }
 }
