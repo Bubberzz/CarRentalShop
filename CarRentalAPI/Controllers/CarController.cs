@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using CarRentalAPI.Attributes;
 using CarRentalAPI.Interfaces;
 using CarRentalAPI.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
@@ -20,6 +21,8 @@ namespace CarRentalAPI.Controllers
             _repository = repository;
         }
 
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Car>>> GetCars()
         {
@@ -27,6 +30,8 @@ namespace CarRentalAPI.Controllers
             return Ok(cars);
         }
 
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [Route("rented")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<RentedCar>>> GetRentedCars()
@@ -35,6 +40,8 @@ namespace CarRentalAPI.Controllers
             return Ok(cars);
         }
 
+
+        [ProducesResponseType(StatusCodes.Status200OK)]
         [Route("rented/check")]
         [HttpGet]
         public async Task<ActionResult<string>> CheckRentedCarExpiry()
@@ -43,6 +50,8 @@ namespace CarRentalAPI.Controllers
             return Ok(JsonConvert.SerializeObject("Expiry check successful"));
         }
 
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpPut("rent/{id}/{rentPeriod}")]
         public async Task<ActionResult<string>> RentCar(int id, int rentPeriod)
         {
@@ -54,6 +63,9 @@ namespace CarRentalAPI.Controllers
             return Ok(JsonConvert.SerializeObject(response));
         }
 
+
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpPut("return/{id}")]
         public async Task<ActionResult<string>> ReturnCar(int id)
         {
