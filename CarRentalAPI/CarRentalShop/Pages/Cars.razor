@@ -4,6 +4,8 @@
 @using CarRentalShop.Services
 @inject HttpClient _http
 @attribute [Authorize]
+@using Microsoft.Extensions.Configuration
+@inject IConfiguration Configuration
 
 <h3>
     <b>Rent Car</b>
@@ -117,7 +119,7 @@ else
     private void CreateClient()
     {
         _http = new HttpClient();
-        _http.DefaultRequestHeaders.Add("ApiKey", "sdf324SdGgD4324rGdfHG3FDghF45TgD2hgDRGdr");
+        _http.DefaultRequestHeaders.Add("ApiKey", Configuration.GetSection("ApiKey").Value);
         _client = new CarRentalAPIClient("https://localhost:44319/", _http);
     }
 }
